@@ -212,3 +212,86 @@ Consider the full plugin-ar if you need:
 ## License
 
 This template is part of the ElizaOS project.
+
+
+
+# Arweave Plugin for ElizaOS
+
+This plugin integrates Arweave network capabilities into ElizaOS, enabling permanent data storage and token transfers.
+
+## Features
+
+### Actions
+- **CREATE_ARWEAVE_WALLET**: Creates a new Arweave wallet
+- **UPLOAD_TO_ARWEAVE**: Uploads data to the Arweave network
+- **RETRIEVE_FROM_ARWEAVE**: Retrieves data from Arweave using transaction ID
+- **TRANSFER_AR_TOKENS**: Transfers AR tokens to another wallet
+- **SEARCH_ARWEAVE**: Searches for transactions using tags
+
+### Providers
+- **ARWEAVE_STATUS**: Provides current network status and block information
+- **WALLET_INFO**: Shows current wallet address and balance
+
+### Evaluators
+- **ARWEAVE_TRANSACTION_TRACKER**: Monitors transaction confirmations and notifies when confirmed
+
+## Installation
+
+```bash
+bun add arweave-plugin
+```
+
+## Configuration
+
+1. Add the plugin to your ElizaOS agent configuration
+2. Set environment variables:
+   - `ARWEAVE_WALLET_KEY`: Your Arweave wallet private key (optional but required for wallet operations)
+
+## Usage
+
+### Creating a Wallet
+```
+Create a new Arweave wallet
+```
+
+### Uploading Data
+```
+Upload "Hello World" to Arweave with content-type=text/plain
+```
+
+### Retrieving Data
+```
+Retrieve data from Arweave transaction abc123...
+```
+
+### Transferring Tokens
+```
+Transfer 1.5 AR to zYxWvU... 
+```
+
+### Searching Data
+```
+Search arweave with tag:content-type=text/html
+```
+
+## Security
+
+- Wallet private keys should be stored securely using environment variables
+- The plugin follows Arweave best practices for transaction signing and data upload
+- All operations include comprehensive error handling
+
+## Development
+
+### Running Tests
+```bash
+bun test
+```
+
+### Building
+```bash
+bun run build
+```
+
+## License
+
+MIT
