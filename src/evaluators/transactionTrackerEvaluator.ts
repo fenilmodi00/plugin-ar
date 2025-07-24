@@ -8,7 +8,7 @@ export const transactionTrackerEvaluator: Evaluator = {
 
   validate: async (runtime: any, message: any) => {
     // Run periodically to check transaction status
-    const messageCount = await runtime.countMemories(message.roomId);
+    const messageCount = await runtime.countMemories(message.roomId, true, "memories");
     // Check every 10 messages
     return messageCount % 10 === 0;
   },
