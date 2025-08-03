@@ -1,18 +1,18 @@
-import { Provider } from '@elizaos/core';
-import { ArweaveService } from '../services/ArweaveService';
+import { Provider } from "@elizaos/core";
+import { ArweaveService } from "../services/ArweaveService";
 
 export const arweaveStatusProvider: Provider = {
-  name: 'ARWEAVE_STATUS',
-  description: 'Provides current Arweave network status and block information',
+  name: "ARWEAVE_STATUS",
+  description: "Provides current Arweave network status and block information",
   dynamic: true,
 
   get: async (runtime: any, message: any, state: any) => {
     try {
       // Get the Arweave service
-      const arweaveService = runtime.getService('arweave') as ArweaveService;
+      const arweaveService = runtime.getService("arweave") as ArweaveService;
       if (!arweaveService) {
         return {
-          text: 'Arweave service is not available.',
+          text: "Arweave service is not available.",
         };
       }
 
@@ -42,7 +42,8 @@ export const arweaveStatusProvider: Provider = {
         },
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       return {
         text: `Failed to get Arweave network status: ${errorMessage}`,
       };

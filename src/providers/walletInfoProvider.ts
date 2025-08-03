@@ -1,18 +1,18 @@
-import { Provider } from '@elizaos/core';
-import { ArweaveService } from '../services/ArweaveService';
+import { Provider } from "@elizaos/core";
+import { ArweaveService } from "../services/ArweaveService";
 
 export const walletInfoProvider: Provider = {
-  name: 'WALLET_INFO',
-  description: 'Provides information about the current Arweave wallet',
+  name: "WALLET_INFO",
+  description: "Provides information about the current Arweave wallet",
   dynamic: true,
 
   get: async (runtime: any, message: any, state: any) => {
     try {
       // Get the Arweave service
-      const arweaveService = runtime.getService('arweave') as ArweaveService;
+      const arweaveService = runtime.getService("arweave") as ArweaveService;
       if (!arweaveService) {
         return {
-          text: 'Arweave service is not available.',
+          text: "Arweave service is not available.",
         };
       }
 
@@ -22,7 +22,7 @@ export const walletInfoProvider: Provider = {
         address = await arweaveService.getWalletAddress();
       } catch (error) {
         return {
-          text: 'No wallet configured. Set ARWEAVE_WALLET_KEY in environment to use wallet features.',
+          text: "No wallet configured. Set ARWEAVE_WALLET_KEY in environment to use wallet features.",
         };
       }
 
@@ -47,7 +47,8 @@ export const walletInfoProvider: Provider = {
         },
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       return {
         text: `Failed to get wallet information: ${errorMessage}`,
       };

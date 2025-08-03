@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import { BigNumber } from "bignumber.js";
 
 /**
  * Arweave Wallet Key interface
@@ -45,33 +45,41 @@ export interface ArweaveUploader {
  */
 export enum ArweaveErrorCode {
   /** Unknown or unhandled error */
-  UNKNOWN = 'UNKNOWN',
+  UNKNOWN = "UNKNOWN",
   /** Insufficient balance for operation */
-  INSUFFICIENT_BALANCE = 'INSUFFICIENT_BALANCE',
+  INSUFFICIENT_BALANCE = "INSUFFICIENT_BALANCE",
   /** Invalid parameters provided */
-  INVALID_PARAMETERS = 'INVALID_PARAMETERS',
+  INVALID_PARAMETERS = "INVALID_PARAMETERS",
   /** Transaction failed */
-  TRANSACTION_FAILED = 'TRANSACTION_FAILED',
+  TRANSACTION_FAILED = "TRANSACTION_FAILED",
   /** Data not found */
-  DATA_NOT_FOUND = 'DATA_NOT_FOUND',
+  DATA_NOT_FOUND = "DATA_NOT_FOUND",
   /** Invalid wallet key */
-  INVALID_WALLET_KEY = 'INVALID_WALLET_KEY',
+  INVALID_WALLET_KEY = "INVALID_WALLET_KEY",
   /** Invalid configuration */
-  INVALID_CONFIG = 'INVALID_CONFIG',
+  INVALID_CONFIG = "INVALID_CONFIG",
   /** Service not initialized */
-  SERVICE_NOT_INITIALIZED = 'SERVICE_NOT_INITIALIZED',
+  SERVICE_NOT_INITIALIZED = "SERVICE_NOT_INITIALIZED",
   /** Wallet not connected */
-  WALLET_NOT_CONNECTED = 'WALLET_NOT_CONNECTED',
+  WALLET_NOT_CONNECTED = "WALLET_NOT_CONNECTED",
   /** Upload failed */
-  UPLOAD_FAILED = 'UPLOAD_FAILED',
+  UPLOAD_FAILED = "UPLOAD_FAILED",
   /** Retrieval failed */
-  RETRIEVAL_FAILED = 'RETRIEVAL_FAILED',
+  RETRIEVAL_FAILED = "RETRIEVAL_FAILED",
   /** Transfer failed */
-  TRANSFER_FAILED = 'TRANSFER_FAILED',
+  TRANSFER_FAILED = "TRANSFER_FAILED",
   /** Search failed */
-  SEARCH_FAILED = 'SEARCH_FAILED',
+  SEARCH_FAILED = "SEARCH_FAILED",
   /** Network error */
-  NETWORK_ERROR = 'NETWORK_ERROR',
+  NETWORK_ERROR = "NETWORK_ERROR",
+  /** ArLocal not running */
+  ARLOCAL_NOT_RUNNING = "ARLOCAL_NOT_RUNNING",
+  /** Mining required in ArLocal */
+  MINING_REQUIRED = "MINING_REQUIRED",
+  /** Token minting failed in ArLocal */
+  MINT_FAILED = "MINT_FAILED",
+  /** Transaction confirmation timeout */
+  TRANSACTION_TIMEOUT = "TRANSACTION_TIMEOUT",
 }
 
 /**
@@ -89,10 +97,10 @@ export class ArweaveError extends Error {
     message: string,
     code: ArweaveErrorCode = ArweaveErrorCode.UNKNOWN,
     cause?: Error,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'ArweaveError';
+    this.name = "ArweaveError";
     this.code = code;
     this.cause = cause;
     this.context = context;
@@ -237,6 +245,30 @@ export interface SearchResult {
   success: boolean;
   /** List of transaction IDs matching the search */
   transactionIds: string[];
+  /** Error information if operation failed */
+  error?: ArweaveError;
+}
+
+/**
+ * Parameters for token minting operation (ArLocal only)
+ */
+export interface MintParams {
+  /** Target address for minting */
+  address: string;
+  /** Amount to mint in winston */
+  amount: string;
+}
+
+/**
+ * Result of a token minting operation (ArLocal only)
+ */
+export interface MintResult {
+  /** Whether the operation was successful */
+  success: boolean;
+  /** Address that received the tokens */
+  address: string;
+  /** Amount minted in winston */
+  amount: string;
   /** Error information if operation failed */
   error?: ArweaveError;
 }

@@ -1,1 +1,1 @@
-export { transactionTrackerEvaluator } from './transactionTrackerEvaluator';
+export { transactionTrackerEvaluator } from "./transactionTrackerEvaluator";

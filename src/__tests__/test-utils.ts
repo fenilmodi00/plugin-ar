@@ -1,4 +1,4 @@
-import { mock, spyOn } from 'bun:test';
+import { mock, spyOn } from "bun:test";
 import {
   Content,
   IAgentRuntime,
@@ -8,43 +8,53 @@ import {
   State,
   UUID,
   logger,
-} from '@elizaos/core';
+} from "@elizaos/core";
 
 /**
  * Creates a mock runtime for testing
  *
+ * @param settings - Optional settings to return from getSetting calls
  * @param overrides - Optional overrides for the default mock methods and properties
  * @returns A mock runtime for testing
  */
-export function createMockRuntime(overrides: Partial<MockRuntime> = {}): MockRuntime {
+export function createMockRuntime(
+  settings: Record<string, string> = {},
+  overrides: Partial<MockRuntime> = {},
+): MockRuntime {
   // Create base mock runtime with defaults
   const mockRuntime: MockRuntime = {
     // Core properties
-    agentId: 'test-agent-id' as UUID,
+    agentId: "test-agent-id" as UUID,
     character: {
-      name: 'Test Character',
-      bio: 'This is a test character for testing',
+      name: "Test Character",
+      bio: "This is a test character for testing",
     },
     services: new Map(),
 
     // Core methods
     getService: mock().mockReturnValue(null),
     registerService: mock(),
-    getSetting: mock().mockReturnValue(null),
+    getSetting: mock().mockImplementation(
+      (key: string) => settings[key] || null,
+    ),
 
     // Model methods
     useModel: mock().mockImplementation((modelType, params) => {
       if (modelType === ModelType.TEXT_SMALL) {
-        return Promise.resolve('Never gonna give you up, never gonna let you down');
+        return Promise.resolve(
+          "Never gonna give you up, never gonna let you down",
+        );
       } else if (modelType === ModelType.TEXT_LARGE) {
-        return Promise.resolve('Never gonna make you cry, never gonna say goodbye');
+        return Promise.resolve(
+          "Never gonna make you cry, never gonna say goodbye",
+        );
       } else if (modelType === ModelType.OBJECT_LARGE) {
         return Promise.resolve({
-          thought: 'I should respond in a friendly way',
-          message: 'Hello there! How can I help you today?',
+          thought: "I should respond in a friendly way",
+          message: "Hello there! How can I help you today?",
         });
       }
-      return Promise.resolve('Default response');
+      return Promise.resolve("Default response");
     }),
 
     // Additional methods used in tests
@@ -62,15 +72,17 @@ export function createMockRuntime(overrides: Partial<MockRuntime> = {}): MockRun
  * @param overrides - Optional overrides for the default memory properties
  * @returns A mock memory object
  */
-export function createMockMemory(overrides: Partial<Memory> = {}): Partial<Memory> {
+export function createMockMemory(
+  overrides: Partial<Memory> = {},
+): Partial<Memory> {
   return {
-    id: 'test-message-id' as UUID,
-    roomId: 'test-room-id' as UUID,
-    entityId: 'test-entity-id' as UUID,
-    agentId: 'test-agent-id' as UUID,
+    id: "test-message-id" as UUID,
+    roomId: "test-room-id" as UUID,
+    entityId: "test-entity-id" as UUID,
+    agentId: "test-agent-id" as UUID,
     content: {
-      text: 'Test message',
-      source: 'test',
+      text: "Test message",
+      source: "test",
     } as Content,
     createdAt: Date.now(),
     ...overrides,
@@ -83,11 +95,13 @@ export function createMockMemory(overrides: Partial<Memory> = {}): Partial<Memor
  * @param overrides - Optional overrides for the default state properties
  * @returns A mock state object
  */
-export function createMockState(overrides: Partial<State> = {}): Partial<State> {
+export function createMockState(
+  overrides: Partial<State> = {},
+): Partial<State> {
   return {
     ...overrides,
     values: {
-      recentMessages: 'User: Test message',
+      recentMessages: "User: Test message",
       ...overrides.values,
     },
     data: {
@@ -107,7 +121,7 @@ export function setupTest(
     runtimeOverrides?: Partial<MockRuntime>;
     messageOverrides?: Partial<Memory>;
     stateOverrides?: Partial<State>;
-  } = {}
+  } = {},
 ) {
   // Create mock callback function
   const callbackFn = mock();
@@ -152,10 +166,10 @@ export interface MockRuntime {
 
 // Add spy on logger for common usage in tests
 export function setupLoggerSpies() {
-  spyOn(logger, 'info').mockImplementation(() => {});
-  spyOn(logger, 'error').mockImplementation(() => {});
-  spyOn(logger, 'warn').mockImplementation(() => {});
-  spyOn(logger, 'debug').mockImplementation(() => {});
+  spyOn(logger, "info").mockImplementation(() => {});
+  spyOn(logger, "error").mockImplementation(() => {});
+  spyOn(logger, "warn").mockImplementation(() => {});
+  spyOn(logger, "debug").mockImplementation(() => {});
 
   // allow tests to restore originals
   return () => mock.restore();

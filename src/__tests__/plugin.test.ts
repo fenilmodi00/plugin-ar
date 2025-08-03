@@ -1,17 +1,31 @@
-import { describe, expect, it, spyOn, beforeEach, afterEach, beforeAll, afterAll } from 'bun:test';
-import { starterPlugin, StarterService } from '../index';
-import { ModelType, logger, type IAgentRuntime, type Service } from '@elizaos/core';
-import dotenv from 'dotenv';
+import {
+  describe,
+  expect,
+  it,
+  spyOn,
+  beforeEach,
+  afterEach,
+  beforeAll,
+  afterAll,
+} from "bun:test";
+import { plugin, ArweaveService } from "../index";
+import {
+  ModelType,
+  logger,
+  type IAgentRuntime,
+  type Service,
+} from "@elizaos/core";
+import dotenv from "dotenv";
 
 // Setup environment variables
 dotenv.config();
 
 // Need to spy on logger for documentation
 beforeAll(() => {
-  spyOn(logger, 'info');
-  spyOn(logger, 'error');
-  spyOn(logger, 'warn');
-  spyOn(logger, 'debug');
+  spyOn(logger, "info");
+  spyOn(logger, "error");
+  spyOn(logger, "warn");
+  spyOn(logger, "debug");
 });
 
 afterAll(() => {
@@ -24,12 +38,13 @@ function createRealRuntime(): Partial<IAgentRuntime> {
 
   // Create a real service instance if needed
   const createService = (serviceType: string): Service | null => {
-    if (serviceType === StarterService.serviceType) {
-      return new StarterService({
+    if (serviceType === ArweaveService.serviceType) {
+      return new ArweaveService({
         character: {
-          name: 'Test Character',
-          system: 'You are a helpful assistant for testing.',
+          name: "Test Character",
+          system: "You are a helpful assistant for testing.",
         },
+        getSetting: (key: string) => null,
       } as IAgentRuntime);
     }
     return null;
@@ -37,9 +52,9 @@ function createRealRuntime(): Partial<IAgentRuntime> {
 
   return {
     character: {
-      name: 'Test Character',
-      system: 'You are a helpful assistant for testing.',
-      bio: 'A test character for unit testing',
+      name: "Test Character",
+      system: "You are a helpful assistant for testing.",
+      bio: "A test character for unit testing",
       plugins: [],
       settings: {},
     },
@@ -69,9 +84,9 @@ function createRealRuntime(): Partial<IAgentRuntime> {
       logger.debug(`Registering service: ${ServiceClass.serviceType}`);
       const runtime = {
         character: {
-          name: 'Test Character',
-          system: 'You are a helpful assistant for testing.',
-          bio: 'A test character for unit testing',
+          name: "Test Character",
+          system: "You are a helpful assistant for testing.",
+          bio: "A test character for unit testing",
         },
       } as IAgentRuntime;
       const service = await ServiceClass.start(runtime);
@@ -80,130 +95,253 @@ function createRealRuntime(): Partial<IAgentRuntime> {
   };
 }
 
-describe('Plugin Configuration', () => {
-  it('should have correct plugin metadata', () => {
-    expect(starterPlugin.name).toBe('plugin-ar');
-    expect(starterPlugin.description).toBe('Quick backend-only plugin template for elizaOS');
-    expect(starterPlugin.config).toBeDefined();
+describe("Plugin Configuration", () => {
+  it("should have correct plugin metadata", () => {
+    expect(plugin.name).toBe("arweave-plugin");
+    expect(plugin.description).toBe(
+      "ElizaOS plugin for Arweave integration, enabling permanent data storage and token transfers",
+    );
+    expect(plugin.config).toBeDefined();
   });
 
-  it('should include the EXAMPLE_PLUGIN_VARIABLE in config', () => {
-    expect(starterPlugin.config).toHaveProperty('EXAMPLE_PLUGIN_VARIABLE');
+  it("should include all required configuration keys", () => {
+    expect(plugin.config).toHaveProperty("ARWEAVE_WALLET_KEY");
+    expect(plugin.config).toHaveProperty("ARWEAVE_GATEWAY");
+    expect(plugin.config).toHaveProperty("ARWEAVE_PORT");
+    expect(plugin.config).toHaveProperty("ARWEAVE_PROTOCOL");
+    expect(plugin.config).toHaveProperty("ARWEAVE_TIMEOUT");
+    expect(plugin.config).toHaveProperty("ARWEAVE_LOGGING");
   });
 
-  it('should initialize properly', async () => {
-    const originalEnv = process.env.EXAMPLE_PLUGIN_VARIABLE;
+  it("should initialize properly with mainnet configuration", async () => {
+    const originalEnv = {
+      ARWEAVE_WALLET_KEY: process.env.ARWEAVE_WALLET_KEY,
+      ARWEAVE_GATEWAY: process.env.ARWEAVE_GATEWAY,
+      ARWEAVE_PORT: process.env.ARWEAVE_PORT,
+      ARWEAVE_PROTOCOL: process.env.ARWEAVE_PROTOCOL,
+    };
 
     try {
-      process.env.EXAMPLE_PLUGIN_VARIABLE = 'test-value';
+      // Set up mainnet configuration
+      process.env.ARWEAVE_WALLET_KEY = JSON.stringify({
+        kty: "RSA",
+        n: "test-key",
+        e: "AQAB",
+        d: "test-private",
+        p: "test-p",
+        q: "test-q",
+        dp: "test-dp",
+        dq: "test-dq",
+        qi: "test-qi",
+      });
+      process.env.ARWEAVE_GATEWAY = "arweave.net";
+      process.env.ARWEAVE_PORT = "443";
+      process.env.ARWEAVE_PROTOCOL = "https";
 
-      // Initialize with config - using real runtime
-      const runtime = createRealRuntime();
+      // Create runtime with getSetting method that returns environment variables
+      const runtime = {
+        ...createRealRuntime(),
+        getSetting: (key: string) => process.env[key] || null,
+      };
 
-      if (starterPlugin.init) {
-        await starterPlugin.init(
-          { EXAMPLE_PLUGIN_VARIABLE: 'test-value' },
-          runtime as IAgentRuntime
+      if (plugin.init) {
+        await plugin.init(
+          {
+            ARWEAVE_WALLET_KEY: process.env.ARWEAVE_WALLET_KEY,
+            ARWEAVE_GATEWAY: process.env.ARWEAVE_GATEWAY,
+            ARWEAVE_PORT: process.env.ARWEAVE_PORT,
+            ARWEAVE_PROTOCOL: process.env.ARWEAVE_PROTOCOL,
+          },
+          runtime as IAgentRuntime,
         );
         expect(true).toBe(true); // If we got here, init succeeded
       }
     } finally {
-      process.env.EXAMPLE_PLUGIN_VARIABLE = originalEnv;
-    }
-  });
-
-  it('should have a valid config', () => {
-    expect(starterPlugin.config).toBeDefined();
-    if (starterPlugin.config) {
-      // Check if the config has expected EXAMPLE_PLUGIN_VARIABLE property
-      expect(Object.keys(starterPlugin.config)).toContain('EXAMPLE_PLUGIN_VARIABLE');
-    }
-  });
-});
-
-describe('Plugin Models', () => {
-  it('should have TEXT_SMALL model defined', () => {
-    expect(starterPlugin.models?.[ModelType.TEXT_SMALL]).toBeDefined();
-    if (starterPlugin.models) {
-      expect(typeof starterPlugin.models[ModelType.TEXT_SMALL]).toBe('function');
-    }
-  });
-
-  it('should have TEXT_LARGE model defined', () => {
-    expect(starterPlugin.models?.[ModelType.TEXT_LARGE]).toBeDefined();
-    if (starterPlugin.models) {
-      expect(typeof starterPlugin.models[ModelType.TEXT_LARGE]).toBe('function');
-    }
-  });
-
-  it('should return a response from TEXT_SMALL model', async () => {
-    if (starterPlugin.models?.[ModelType.TEXT_SMALL]) {
-      const runtime = createRealRuntime();
-      const result = await starterPlugin.models[ModelType.TEXT_SMALL](runtime as IAgentRuntime, {
-        prompt: 'test',
+      // Restore original environment
+      Object.entries(originalEnv).forEach(([key, value]) => {
+        if (value === undefined) {
+          delete process.env[key];
+        } else {
+          process.env[key] = value;
+        }
       });
-
-      // Check that we get a non-empty string response
-      expect(result).toBeTruthy();
-      expect(typeof result).toBe('string');
-      expect(result.length).toBeGreaterThan(10);
     }
   });
-});
 
-describe('StarterService', () => {
-  it('should start the service', async () => {
-    const runtime = createRealRuntime();
-    const startResult = await StarterService.start(runtime as IAgentRuntime);
-
-    expect(startResult).toBeDefined();
-    expect(startResult.constructor.name).toBe('StarterService');
-
-    // Test real functionality - check stop method is available
-    expect(typeof startResult.stop).toBe('function');
-  });
-
-  it('should stop the service', async () => {
-    const runtime = createRealRuntime();
-
-    // Start the service to get the actual instance
-    const service = await StarterService.start(runtime as IAgentRuntime);
-
-    // Spy on the real service's stop method
-    const stopSpy = spyOn(service, 'stop');
-
-    // Mock getService to return our spied service
-    const originalGetService = runtime.getService;
-    runtime.getService = <T extends Service>(serviceType: string): T | null => {
-      if (serviceType === StarterService.serviceType) {
-        return service as T;
-      }
-      return null;
+  it("should initialize properly with ArLocal configuration", async () => {
+    const originalEnv = {
+      ARWEAVE_WALLET_KEY: process.env.ARWEAVE_WALLET_KEY,
+      ARWEAVE_GATEWAY: process.env.ARWEAVE_GATEWAY,
+      ARWEAVE_PORT: process.env.ARWEAVE_PORT,
+      ARWEAVE_PROTOCOL: process.env.ARWEAVE_PROTOCOL,
     };
 
-    // Call the static stop method
-    await StarterService.stop(runtime as IAgentRuntime);
+    try {
+      // Set up ArLocal configuration
+      process.env.ARWEAVE_WALLET_KEY = JSON.stringify({
+        kty: "RSA",
+        n: "test-key",
+        e: "AQAB",
+        d: "test-private",
+        p: "test-p",
+        q: "test-q",
+        dp: "test-dp",
+        dq: "test-dq",
+        qi: "test-qi",
+      });
+      process.env.ARWEAVE_GATEWAY = "localhost";
+      process.env.ARWEAVE_PORT = "1984";
+      process.env.ARWEAVE_PROTOCOL = "http";
 
-    // Verify the service's stop method was called
-    expect(stopSpy).toHaveBeenCalled();
+      // Create runtime with getSetting method that returns environment variables
+      const runtime = {
+        ...createRealRuntime(),
+        getSetting: (key: string) => process.env[key] || null,
+      };
 
-    // Restore original getService
-    runtime.getService = originalGetService;
+      if (plugin.init) {
+        // This should succeed even if ArLocal is not running (it will just warn)
+        await plugin.init(
+          {
+            ARWEAVE_WALLET_KEY: process.env.ARWEAVE_WALLET_KEY,
+            ARWEAVE_GATEWAY: process.env.ARWEAVE_GATEWAY,
+            ARWEAVE_PORT: process.env.ARWEAVE_PORT,
+            ARWEAVE_PROTOCOL: process.env.ARWEAVE_PROTOCOL,
+          },
+          runtime as IAgentRuntime,
+        );
+        expect(true).toBe(true); // If we got here, init succeeded
+      }
+    } finally {
+      // Restore original environment
+      Object.entries(originalEnv).forEach(([key, value]) => {
+        if (value === undefined) {
+          delete process.env[key];
+        } else {
+          process.env[key] = value;
+        }
+      });
+    }
   });
 
-  it('should throw an error when stopping a non-existent service', async () => {
+  it("should handle invalid wallet key gracefully", async () => {
+    const originalEnv = {
+      ARWEAVE_WALLET_KEY: process.env.ARWEAVE_WALLET_KEY,
+      ARWEAVE_GATEWAY: process.env.ARWEAVE_GATEWAY,
+      ARWEAVE_PORT: process.env.ARWEAVE_PORT,
+      ARWEAVE_PROTOCOL: process.env.ARWEAVE_PROTOCOL,
+    };
+
+    try {
+      // Set up configuration with invalid wallet key
+      process.env.ARWEAVE_WALLET_KEY = "invalid-json";
+      process.env.ARWEAVE_GATEWAY = "arweave.net";
+      process.env.ARWEAVE_PORT = "443";
+      process.env.ARWEAVE_PROTOCOL = "https";
+
+      // Create runtime with getSetting method that returns environment variables
+      const runtime = {
+        ...createRealRuntime(),
+        getSetting: (key: string) => process.env[key] || null,
+      };
+
+      if (plugin.init) {
+        // This should throw an error due to invalid wallet key
+        await expect(
+          plugin.init(
+            {
+              ARWEAVE_WALLET_KEY: process.env.ARWEAVE_WALLET_KEY,
+              ARWEAVE_GATEWAY: process.env.ARWEAVE_GATEWAY,
+              ARWEAVE_PORT: process.env.ARWEAVE_PORT,
+              ARWEAVE_PROTOCOL: process.env.ARWEAVE_PROTOCOL,
+            },
+            runtime as IAgentRuntime,
+          ),
+        ).rejects.toThrow();
+      }
+    } finally {
+      // Restore original environment
+      Object.entries(originalEnv).forEach(([key, value]) => {
+        if (value === undefined) {
+          delete process.env[key];
+        } else {
+          process.env[key] = value;
+        }
+      });
+    }
+  });
+
+  it("should have a valid config with proper defaults", () => {
+    expect(plugin.config).toBeDefined();
+    if (plugin.config) {
+      // Check if the config has all expected properties
+      const expectedKeys = [
+        "ARWEAVE_WALLET_KEY",
+        "ARWEAVE_GATEWAY",
+        "ARWEAVE_PORT",
+        "ARWEAVE_PROTOCOL",
+        "ARWEAVE_TIMEOUT",
+        "ARWEAVE_LOGGING",
+      ];
+      expectedKeys.forEach((key) => {
+        expect(Object.keys(plugin.config!)).toContain(key);
+      });
+
+      // Check default values
+      expect(plugin.config.ARWEAVE_GATEWAY.default).toBe("arweave.net");
+      expect(plugin.config.ARWEAVE_PORT.default).toBe(443);
+      expect(plugin.config.ARWEAVE_PROTOCOL.default).toBe("https");
+      expect(plugin.config.ARWEAVE_TIMEOUT.default).toBe(20000);
+      expect(plugin.config.ARWEAVE_LOGGING.default).toBe(false);
+    }
+  });
+});
+
+describe("Plugin Components", () => {
+  it("should have services defined", () => {
+    expect(plugin.services).toBeDefined();
+    expect(plugin.services).toHaveLength(1);
+    expect(plugin.services[0]).toBe(ArweaveService);
+  });
+
+  it("should have actions defined", () => {
+    expect(plugin.actions).toBeDefined();
+    expect(plugin.actions.length).toBeGreaterThan(0);
+  });
+
+  it("should have providers defined", () => {
+    expect(plugin.providers).toBeDefined();
+    expect(plugin.providers.length).toBeGreaterThan(0);
+  });
+
+  it("should have evaluators defined", () => {
+    expect(plugin.evaluators).toBeDefined();
+    expect(plugin.evaluators.length).toBeGreaterThan(0);
+  });
+});
+
+describe("ArweaveService", () => {
+  it("should start the service", async () => {
     const runtime = createRealRuntime();
-    // Don't register a service, so getService will return null
+    const startResult = await ArweaveService.start(runtime as IAgentRuntime);
 
-    // We'll patch the getService function to ensure it returns null
-    const originalGetService = runtime.getService;
-    runtime.getService = () => null;
+    expect(startResult).toBeDefined();
+    expect(startResult.constructor.name).toBe("ArweaveService");
 
-    await expect(StarterService.stop(runtime as IAgentRuntime)).rejects.toThrow(
-      'Starter service not found'
-    );
+    // Test real functionality - check stop method is available
+    expect(typeof startResult.stop).toBe("function");
+  });
 
-    // Restore original getService function
-    runtime.getService = originalGetService;
+  it("should have correct service type", () => {
+    expect(ArweaveService.serviceType).toBe("arweave");
+  });
+
+  it("should have capability description", async () => {
+    const runtime = createRealRuntime();
+    const service = await ArweaveService.start(runtime as IAgentRuntime);
+
+    expect(service.capabilityDescription).toBeDefined();
+    expect(typeof service.capabilityDescription).toBe("string");
+    expect(service.capabilityDescription.length).toBeGreaterThan(0);
   });
 });
