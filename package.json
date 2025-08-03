@@ -1,7 +1,7 @@
 {
   "name": "plugin-ar",
-  "description": "Quick backend-only plugin template for ElizaOS",
-  "version": "0.1.0",
+  "description": "Arweave integration plugin for ElizaOS enabling permanent data storage and blockchain interactions",
+  "version": "0.0.1",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -9,18 +9,21 @@
   "packageType": "plugin",
   "platform": "node",
   "license": "UNLICENSED",
-  "author": "${GITHUB_USERNAME}",
+  "author": "fenilmodi00",
   "keywords": [
     "plugin",
-    "elizaos"
+    "elizaos",
+    "arweave",
+    "blockchain",
+    "permanent-storage"
   ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/fenilmodi00/plugin-ar.git"
   },
-  "homepage": "https://elizaos.ai",
+  "homepage": "https://github.com/fenilmodi00/plugin-ar",
   "bugs": {
-    "url": "https://github.com/${GITHUB_USERNAME}/${PLUGINNAME}/issues"
+    "url": "https://github.com/fenilmodi00/plugin-ar/issues"
   },
   "exports": {
     "./package.json": "./package.json",

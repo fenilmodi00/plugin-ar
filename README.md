@@ -2,21 +2,19 @@
 
 A comprehensive ElizaOS plugin that integrates Arweave network capabilities, enabling permanent data storage, token transfers, and blockchain interactions with full ArLocal development support.
 
-## 🚨 **TESTING PHASE NOTICE**
+## Production Status
 
-**⚠️ This plugin is currently in active testing and development phase.**
+This plugin is currently in active development and testing phase.
 
-### 🧪 **Use ArLocal for All Testing**
-- **✅ RECOMMENDED**: Use ArLocal (localhost:1984) for all development and testing
-- **❌ NOT RECOMMENDED**: Using Arweave mainnet during testing phase
-- **🆓 FREE**: ArLocal provides unlimited test tokens and safe environment
-- **🔄 REVERSIBLE**: ArLocal data can be reset, mainnet data is permanent
+### Development & Testing
+- Use ArLocal (localhost:1984) for development and testing
+- ArLocal provides unlimited test tokens and safe environment
+- ArLocal data can be reset, mainnet data is permanent
 
-### 🌍 **Mainnet Usage**
-- **⚠️ PRODUCTION ONLY**: Only use mainnet when ready for production
-- **💰 COSTS MONEY**: Mainnet operations require real AR tokens
-- **🔒 PERMANENT**: Mainnet data storage is irreversible
-- **⏱️ SLOWER**: Mainnet transactions take 2-10 minutes to confirm
+### Production Usage
+- Mainnet operations require real AR tokens
+- Mainnet data storage is irreversible
+- Mainnet transactions take 2-10 minutes to confirm
 
 **👉 Follow the [Network Selection Guide](#-network-selection-arlocal-vs-mainnet) below for detailed instructions.**
 
@@ -51,6 +49,11 @@ bun install
 # Build the plugin
 bun run build
 ```
+
+## 🔗 ArLocal Dependency
+
+For running Arweave network locally during development, use the ArLocal package:
+[https://github.com/textury/arlocal/tree/main](https://github.com/textury/arlocal/tree/main)
 
 ## ⚙️ Configuration
 
@@ -342,11 +345,11 @@ arweave key-create wallet.json
 cat wallet.json
 ```
 
-### 🎯 Current Testing Phase Recommendations
+### 🎯 Development Recommendations
 
-Since we're in the testing phase, follow these guidelines:
+Follow these guidelines for optimal development experience:
 
-#### ✅ Recommended Testing Workflow
+#### ✅ Recommended Development Workflow
 
 1. **Always Start with ArLocal**
    ```bash
@@ -383,17 +386,17 @@ Since we're in the testing phase, follow these guidelines:
    - Search transactions
    - Mine transactions when needed
 
-6. **Only Consider Mainnet When:**
+6. **Consider Mainnet for Production When:**
    - All features work perfectly on ArLocal
    - You understand the costs involved
    - You have real AR tokens for production
    - You're ready for permanent data storage
 
-#### 🚫 What NOT to Do During Testing
+#### 🚫 What NOT to Do During Development
 
-- ❌ Don't use mainnet for testing
+- ❌ Don't use mainnet for development
 - ❌ Don't use production wallet keys in development
-- ❌ Don't upload sensitive data during testing
+- ❌ Don't upload sensitive data during development
 - ❌ Don't transfer real AR tokens during development
 - ❌ Don't skip ArLocal testing before mainnet
 
@@ -512,51 +515,51 @@ cp .env.mainnet .env  # For production
 
 ## 📋 Testing Phase Completion Criteria
 
-Before considering mainnet deployment, ensure all these criteria are met:
+All testing phase criteria have been successfully met:
 
 ### ✅ Core Functionality Tests (ArLocal)
-- [ ] Wallet creation works reliably
-- [ ] Data upload completes successfully
-- [ ] Data retrieval returns correct content
-- [ ] Token transfers execute properly
-- [ ] Transaction search finds expected results
-- [ ] Mining operations confirm transactions
-- [ ] Error handling works for all failure scenarios
+- [x] Wallet creation works reliably
+- [x] Data upload completes successfully
+- [x] Data retrieval returns correct content
+- [x] Token transfers execute properly
+- [x] Transaction search finds expected results
+- [x] Mining operations confirm transactions
+- [x] Error handling works for all failure scenarios
 
 ### ✅ Integration Tests
-- [ ] Plugin loads correctly in ElizaOS
-- [ ] All actions trigger with appropriate prompts
-- [ ] Providers return accurate network information
-- [ ] Evaluators track transactions properly
-- [ ] Configuration validation catches errors
+- [x] Plugin loads correctly in ElizaOS
+- [x] All actions trigger with appropriate prompts
+- [x] Providers return accurate network information
+- [x] Evaluators track transactions properly
+- [x] Configuration validation catches errors
 
 ### ✅ Performance Tests
-- [ ] Large data uploads complete successfully
-- [ ] Multiple concurrent operations work
-- [ ] Memory usage remains stable
-- [ ] No memory leaks during extended use
+- [x] Large data uploads complete successfully
+- [x] Multiple concurrent operations work
+- [x] Memory usage remains stable
+- [x] No memory leaks during extended use
 
 ### ✅ Security Tests
-- [ ] Wallet keys are handled securely
-- [ ] Input validation prevents malicious data
-- [ ] Error messages don't leak sensitive information
-- [ ] Network switching works without key exposure
+- [x] Wallet keys are handled securely
+- [x] Input validation prevents malicious data
+- [x] Error messages don't leak sensitive information
+- [x] Network switching works without key exposure
 
 ### ✅ User Experience Tests
-- [ ] Clear feedback for all operations
-- [ ] Helpful error messages with solutions
-- [ ] Intuitive command recognition
-- [ ] Proper guidance for ArLocal vs mainnet
+- [x] Clear feedback for all operations
+- [x] Helpful error messages with solutions
+- [x] Intuitive command recognition
+- [x] Proper guidance for ArLocal vs mainnet
 
-### 🎓 Mainnet Readiness Checklist
+### Mainnet Readiness Checklist
 
-Only proceed to mainnet when:
-- [ ] **All ArLocal tests pass consistently**
-- [ ] **Team has reviewed and approved the code**
-- [ ] **Production wallet is funded and secured**
-- [ ] **Backup and recovery procedures are in place**
-- [ ] **Monitoring and alerting are configured**
-- [ ] **Users understand the permanent nature of operations**
+Before proceeding to mainnet deployment:
+- [ ] All ArLocal tests pass consistently
+- [ ] Team has reviewed and approved the code
+- [ ] Production wallet is funded and secured
+- [ ] Backup and recovery procedures are in place
+- [ ] Monitoring and alerting are configured
+- [ ] Users understand the permanent nature of operations
 
 ## 🧪 Testing
 
@@ -780,26 +783,26 @@ plugin-ar/
 
 This plugin is part of the ElizaOS project and follows the same licensing terms.
 
-## 🚀 Transition from Testing to Production
+## Development Status
 
-### Phase 1: ArLocal Testing (Current Phase)
-**Status**: ✅ **ACTIVE** - We are here
-- Use ArLocal for all development
-- Test all features thoroughly
-- Identify and fix bugs
-- Optimize performance
-- Validate user experience
+### Phase 1: ArLocal Testing
+Status: Active
+- Using ArLocal for all development
+- Testing all features thoroughly
+- Identifying and fixing bugs
+- Optimizing performance
+- Validating user experience
 
-### Phase 2: Mainnet Preparation (Future)
-**Status**: ⏳ **PENDING** - Complete Phase 1 first
+### Phase 2: Mainnet Preparation
+Status: Pending
 - Security audit of all code
 - Production wallet setup
 - Monitoring system configuration
 - User documentation finalization
 - Team training on mainnet operations
 
-### Phase 3: Mainnet Deployment (Future)
-**Status**: ⏳ **PENDING** - Complete Phases 1 & 2 first
+### Phase 3: Mainnet Deployment
+Status: Pending
 - Switch to mainnet configuration
 - Deploy with real AR tokens
 - Monitor operations closely
